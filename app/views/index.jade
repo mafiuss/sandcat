@@ -1,0 +1,32 @@
+extends layouts/default
+
+block content
+  .navbar.navbar-default.navbar-fixed-top
+      .container
+        .navbar-header
+          button(class='navbar-toggle', data-toggle='colapse', data-target='.navbar-colapse')
+            span(class='sr-only') Toggle navigation
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+        a(class='navbar-brand', href='home') Mean Cat
+        .navbar-collapse.collapse
+          ul(class='nav navbar-nav')
+            li(class='active')
+              a(href='#about') About
+            li
+              a(href='#contact') Contact
+            li
+              a(href='kittens') Kittens
+
+    .container
+      .jumbotron
+        h1= title
+        p Welcome to #{title}
+        p extra: #{extra}
+        p A more complex experience after you throw your first
+          //- notice that there is an extra space before hairball
+          //- that space does appear in the markup
+          a(href='hairball')  hairball
+
+    script(src='jquery/dist/jquery.min.js')

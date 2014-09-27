@@ -1,0 +1,16 @@
+doctype html
+html(ng-app='kittensApp')
+  head
+    title= title
+    link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='stylesheets/style.css')
+    script(src='angular/angular.js')
+    script(src='angular-resource/angular-resource.js')
+    script(src='angular-ui-router/release/angular-ui-router.js')
+    script(src='javascripts/kittens.js')
+    script(src='javascripts/controllers/kittens.js')
+    script(src='javascripts/services/global.js')
+    script(src='javascripts/services/kittens.js')
+    script(src='javascripts/routes/kittens.js')
+  body
+    block content

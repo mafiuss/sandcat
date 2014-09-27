@@ -1,0 +1,25 @@
+extends layouts/webapp
+
+block content
+  .navbar.navbar-default.navbar-fixed-top
+      .container
+        .navbar-header
+          button(class='navbar-toggle', data-toggle='colapse', data-target='.navbar-colapse')
+            span(class='sr-only') Toggle navigation
+            span(class='icon-bar')
+            span(class='icon-bar')
+            span(class='icon-bar')
+        a(class='navbar-brand', href='home') Mean Cat
+        .navbar-collapse.collapse
+          ul(class='nav navbar-nav')
+            li(class='active')
+              a(href='#about', ui-sref='hairballstate1') About
+            li
+              a(href='#contact', ui-sref='hairballstate2') Contact
+            li
+              a(href='#guat', ui-sref='experiment') Laboratories
+
+    .container
+      div(ui-view)
+
+    script(src='jquery/dist/jquery.min.js')

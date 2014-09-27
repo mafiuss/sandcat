@@ -1,0 +1,23 @@
+{
+  "name": "xn",
+  "version": "0.0.0",
+  "authors": [
+    "mafiuss <mafiuss@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "bootstrap": "~3.2.0",
+    "angular": "~1.2.24",
+    "angular-mocks": "~1.2.24",
+    "angular-ui-router": "~0.2.11",
+    "angular-resource": "~1.2.24"
+  }
+}

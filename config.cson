@@ -1,0 +1,9 @@
+{
+  mountPath: '/cat'
+  subappsDir: 'subapps'
+  subapps: [
+    'kittens'
+  ]
+  viewEngine: 'jade'
+  viewsDir: 'app/views'
+}
