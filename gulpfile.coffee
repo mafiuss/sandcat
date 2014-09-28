@@ -14,7 +14,7 @@ gulp.task 'karma', ->
     process.exit exitCode
 
 gulp.task 'mocha', ->
-  gulp.src './servertest/*/*.coffee', read: off
+  gulp.src './servertest/**/*.coffee', read: off
   .pipe mocha
     reporter: 'nyan'
 
