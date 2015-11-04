@@ -6,20 +6,28 @@ logger = require 'morgan'
 cookieParser = require 'cookie-parser'
 bodyParser = require 'body-parser'
 CSON = require 'season'
+session = require 'express-session'
+passport = require 'passport'
+compression = require 'compression'
+fs = require 'fs'
+
+configurator = require './config/configurator'
 
 CONFIG = CSON.readFileSync path.join(__dirname ,'config.cson')
+CONFIG.rootDir = __dirname
 console.log CONFIG
-
-routes = require './app/routes/index'
-users = require './app/routes/users'
-
-kittensApp = require(path.join(__dirname, CONFIG.subappsDir, CONFIG.subapps[0], 'app'))(express(), CONFIG)
+#
+# DEFAULT VALUES
+# kind of constant globals
+CONFIG.defaultAppDir = 'app'
 
 app = express()
 
+app.set 'strict routing', on
 # view engine setup
-app.set 'views', path.join(__dirname, CONFIG.viewsDir)
+# we set views at this level so we can call res.render
 app.set 'view engine', CONFIG.viewEngine
+app.set 'views', path.join(__dirname, CONFIG.viewsDir)
 
 # pluginable modules
 # subapps = ['kittens']
@@ -28,65 +36,113 @@ app.set 'view engine', CONFIG.viewEngine
 # app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use logger('dev')
 app.use bodyParser.json()
-app.use bodyParser.urlencoded(extended: false)
+app.use bodyParser.urlencoded(extended: on)
 app.use cookieParser()
-app.use require('stylus').middleware(path.join(__dirname, 'public'))
+app.use compression()
+# AUTH
+# passport configuration
+# required for passport
+#
+app.use session
+  secret: 'meow!purr'
+  resave: off
+  saveUninitialized: off
 
-# context path
+app.use passport.initialize()
+app.use passport.session()
 
-base = CONFIG.mountPath
+userModel = require './app/models/user'
+logModel = require './app/models/accessLog'
+require('./config/passport')(passport, userModel, {logClass: logModel, config:CONFIG})
 
-# dev only middleware
-if app.get('env') is 'development'
-  app.use "#{base}", express.static(path.join(__dirname, 'bower_components'))
+# context path / mount path
+# config setting that defaults to '/cat'
+base = CONFIG.mountPath or '/'
+console.log 'mountPath', base
+# since we have a mount path we redirect all request to http://example.com/
+# to http://example.com/base
+if base? and base isnt '' and base isnt '/'
+  app.route('/').get (req, res) ->
+    res.redirect "#{base}/"
 
-  # the following will try to find the coffeescript file that matches file.js
-  # compile it and serve the js result on the fly
-  app.use "#{base}/javascripts", (request, response, next) ->
-    coffeeFile = path.join __dirname, "/clientapp", request.path
-    coffeeFile = coffeeFile.substring(0, coffeeFile.lastIndexOf('.'))
-    coffeeFile += '.coffee'
-    fs = require 'fs'
-    file = fs.readFile coffeeFile, "utf-8", (err, data) ->
-      return next() if err?
-      response
+baseApp = require('./app/routes/routes')(express(), CONFIG, passport)
+configurator baseApp,
+  config: CONFIG
+  appRootDir: path.join(__dirname, '')
+
+app.use "#{base}", baseApp
+
+# service worker special route
+app.use "#{base}/sw-import", (req, res) ->
+  try
+    p = path.join __dirname, 'public/javascripts/sw-import'
+    if app.get('env') is 'production'
+      p += ".js"
+    else
+      p += ".coffee"
+
+    scriptContents = fs.readFile p, "utf-8", (err, data) ->
+      return next(err) if err?
+      return next() unless data?
+
+      if app.get('env') is 'development'
+        scriptContents = coffee.compile data, bare: on
+
+      res
         .contentType('text/javascript')
-        .send coffee.compile data, bare: on
+        .send scriptContents
 
-# routers and static assets
-app.use "#{base}/", routes
-app.use "#{base}/users", users
+  catch error
+    console.log error, path
+    return ''
 
-# pluginable app
-app.use "#{base}/kittens", kittensApp
-app.use "#{base}", express.static(path.join(__dirname, 'public'))
-# the following enables serving view files
-# which allows client code routers to find partials
 app.use "#{base}/partials", (req, res) ->
   res.render "partials/#{req.path}"
 
+## bower_components route and uploads dir configuration
+app.use "#{base}/#{CONFIG.uploadsDir}",
+  express.static(path.join(__dirname, CONFIG.uploadsDir))
+
+#
+# subapps configuration
+#
+for subapp in CONFIG.subapps
+  console.log "config: #{subapp}"
+  initializer = require path.join(__dirname,
+    CONFIG.subappsDir, subapp,CONFIG.defaultAppDir)
+  subModule = null
+  CONFIG.subappName = subapp
+  if CONFIG.authModule? and (CONFIG.authModule.indexOf(subapp) isnt -1)
+    console.log 'auth setup', subapp
+    subModule = initializer(express(), CONFIG, passport)
+  else
+    subModule = initializer(express(), CONFIG)
+
+  app.use "#{base}/#{subapp}", subModule
+
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
-    err = new Error('Not Found')
-    err.status = 404
-    next err
+  err = new Error('Not Found')
+  err.status = 404
+  console.log 'not found', req.path
+  next err
 
 #error handlers
 #development error handler
 # will print stacktrace
 if app.get('env') is 'development'
-    app.use (err, req, res, next) ->
-        res.status err.status || 500
-        res.render 'error',
-            message: err.message
-            error: err
+  app.use (err, req, res, next) ->
+      res.status err.status || 500
+      res.render 'error',
+          message: err.message
+          error: err
 
 # production error handler
 # no stacktraces leaked to user
 app.use (err, req, res, next) ->
-    res.status err.status || 500
-    res.render 'error',
-        message: err.message
-        error: {}
+  res.status err.status || 500
+  res.render 'error',
+      message: err.message
+      error: {}
 
-module.exports = app;
+module.exports = app

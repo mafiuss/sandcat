@@ -26,3 +26,7 @@ bower_components
 # App Files
 # --------------------
 test/coverage/
+scripts
+uploads
+test/tmp
+subapps/*

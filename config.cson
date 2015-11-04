@@ -1,9 +1,14 @@
 {
-  mountPath: '/cat'
+  mountPath: ''
   subappsDir: 'subapps'
-  subapps: [
-    'kittens'
-  ]
+  subapps: []
   viewEngine: 'jade'
   viewsDir: 'app/views'
+  authentication: 'onRequest'
+  authStrategy: 'local'
+  authModule: []
+  landingModule: ''
+  dbname: 'sandcat'
+  uploadsDir: 'uploads'
+  baseURL: 'http://localhost:8006'
 }
