@@ -4,6 +4,7 @@ path = require 'path'
 fs = require 'fs'
 jadeStatic = require 'connect-jade-static'
 async = require 'async'
+stylus = require 'stylus'
 
 findFile = (app, request, ext, cb) ->
   try

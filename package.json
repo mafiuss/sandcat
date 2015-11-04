@@ -18,6 +18,8 @@
     "express-session": "^1.11.3",
     "gulp-imagemin": "^2.3.0",
     "jade": "latest",
+    "jstransformer": "0.0.3",
+    "jstransformer-stylus": "^1.0.0",
     "karma": "^0.13.11",
     "karma-coffee-preprocessor": "^0.3.0",
     "karma-jasmine": "^0.3.6",

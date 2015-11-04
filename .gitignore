@@ -30,3 +30,7 @@ scripts
 uploads
 test/tmp
 subapps/*
+
+# build files
+dist
+.tmp

@@ -65,4 +65,11 @@ do (document) ->
     document.getElementById('mainContainer').scrollTop = 0
     return
 
+  app.myListItems = [
+    name: 'nina'
+    gender: 'female'
+  ,
+    name: 'hannibal'
+    gender: 'male'
+  ]
   return

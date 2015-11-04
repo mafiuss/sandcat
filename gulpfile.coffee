@@ -12,7 +12,7 @@ debug  = require 'gulp-debug'
 symlink = require 'gulp-symlink'
 
 sandcatConfig = CSON.readFileSync path.join(__dirname ,'config.cson')
-console.log $
+# console.log $
 gulp.task 'default', () ->
   gutil.log 'ok'
 
@@ -110,7 +110,9 @@ gulp.task 'copy', ->
     .pipe gulp.dest "dist/#{sandcatConfig.subappsDir}"
   gulp.src ['bower_components']
     .pipe symlink('.tmp/components')
+    .pipe symlink('.tmp/bower_components')
     .pipe symlink('.tmp/public/components')
+    .pipe symlink('.tmp/public/bower_components')
   gulp.src ['bower_components/**/*']
     .pipe gulp.dest 'dist/bower_components'
 
@@ -169,7 +171,9 @@ gulp.task 'webcomponentscss', ->
 
 gulp.task 'webcomponentshtml', ->
   gulp.src ['public/elements/**/*.jade']
-    .pipe $.jade()
+    .pipe $.replace /(include:stylus\s+)\.\/([\-\w]+)\.styl/,
+      'include ../../../.tmp/public/elements/$2/$2.css'
+    .pipe $.jade(), { cwd: '.tmp/public/elements' }
     .pipe gulp.dest '.tmp/public/elements'
 
   gulp.src [
@@ -191,10 +195,21 @@ gulp.task 'webcomponentshtml', ->
     path.dirname = ''
   # .pipe debug title: 'after path rename'
   .pipe gulp.dest ".tmp/public/elements"
+# TODO:
+# vulcanize will run before webcomponentshtml is done.
+gulp.task 'wait', (done) ->
+  gutil.log 'waiting...'
+  setTimeout ->
+    gutil.log 'done.'
+    done()
+  , 1000
+  # gulp.src ['./*']
+  # .pipe $.debug title: 'waition'
 
 gulp.task 'vulcanize', ->
-  gulp.src [".tmp/public/elements/**/*-elements.html"]
-  .pipe debug title: 'after src'
+  gutil.log 'vulcanizing'
+  gulp.src ['.tmp/public/elements/**/*-elements.html']
+  .pipe debug {title: 'after src', minimal: off}
   .pipe $.vulcanize(
     dest: 'dist/public/elements'
     stripComments: on
@@ -206,4 +221,5 @@ gulp.task 'vulcanize', ->
 
 gulp.task 'build', ['clean'], (cb)->
   runSeq 'copy', 'images', ['coffee', 'styles'],
-    'webcomponentsjs', 'webcomponentshtml', 'webcomponentscss', 'vulcanize', cb
+    'webcomponentsjs', 'webcomponentscss', 'webcomponentshtml',
+    'wait', 'vulcanize', cb

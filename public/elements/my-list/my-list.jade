@@ -1,0 +1,17 @@
+dom-module#my-list
+  template
+    style
+      include:stylus ./my-list.styl
+    section
+      iron-ajax#net(
+        url='{{url}}',
+        on-response='responseHandler',
+        on-error='errorHandler')
+    section
+      iron-list#listElement(items='{{list}}')
+        template
+          paper-item
+            span {{item.name}}
+            paper-item-body
+              span {{item.gender}}
+script(src='my-list.js')
