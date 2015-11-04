@@ -8,15 +8,18 @@ This is an opinionated full stack coffee-script web app kit, it uses:
 It builds a minified/vulcanized html/css/js dist too.
 
 ## Usage
-
-1. git clone https://github.com/mafiuss/sandcat.git
-2. cd sandcat
-3. npm i & bower i
-4. sh start.sh
-
-To build a minimified/vulcanized dist run
+```
+git clone https://github.com/mafiuss/sandcat.git
+cd sandcat
+npm i & bower i
+sh start.sh
+```
+To build a minimified/vulcanized dist run:
+```bash
 gulp dist
-
+cd dist
+HOSTNAME=0.0.0.0 PORT=8006 NODE_ENV=production node index.js
+```
 ## Contributing
 
 1. Fork it!
