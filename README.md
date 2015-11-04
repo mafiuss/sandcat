@@ -1,9 +1,12 @@
 # Project Name
 
 This is an opinionated full stack coffee-script web app kit, it uses:
+
+- coffee-script only throughout all the stack
 - stylus for stylesheets
 - jade as the view engine
 - gulp as the build system
+- mongodb
 
 It builds a minified/vulcanized html/css/js dist too.
 
