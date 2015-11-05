@@ -56,6 +56,30 @@ logModel = require './app/models/accessLog'
 require('./config/passport')(passport, userModel, {logClass: logModel, config:CONFIG})
 
 # context path / mount path
+# helper to define the correct base url based on mountPath
+if !String::startsWith
+  String::startsWith = (searchString, position) ->
+    position = position or 0
+    @indexOf(searchString, position) == position
+
+if !String::endsWith
+  String::endsWith = (searchString, position) ->
+    subjectString = @toString()
+    if typeof position != 'number' or !isFinite(position) or Math.floor(position) != position or position > subjectString.length
+      position = subjectString.length
+    position -= searchString.length
+    lastIndex = subjectString.indexOf(searchString, position)
+    lastIndex != -1 and lastIndex == position
+
+routePath = (fragment) ->
+  mountPath = CONFIG.mountPath or '/'
+  return fragment if mountPath is '/'
+
+  if mountPath.endswith('/') and fragment.startsWith('/')
+    fragment = fragment.substring 1, fragment.length
+
+  return "#{mountPath}#{fragment}"
+
 # config setting that defaults to '/cat'
 base = CONFIG.mountPath or '/'
 console.log 'mountPath', base
@@ -73,7 +97,7 @@ configurator baseApp,
 app.use "#{base}", baseApp
 
 # service worker special route
-app.use "#{base}/sw-import", (req, res) ->
+app.use routePath('/sw-import'), (req, res) ->
   try
     p = path.join __dirname, 'public/javascripts/sw-import'
     if app.get('env') is 'production'
@@ -96,11 +120,11 @@ app.use "#{base}/sw-import", (req, res) ->
     console.log error, path
     return ''
 
-app.use "#{base}/partials", (req, res) ->
+app.use routePath('/partials'), (req, res) ->
   res.render "partials/#{req.path}"
 
 ## bower_components route and uploads dir configuration
-app.use "#{base}/#{CONFIG.uploadsDir}",
+app.use routePath("/#{CONFIG.uploadsDir}"),
   express.static(path.join(__dirname, CONFIG.uploadsDir))
 
 #
@@ -118,7 +142,7 @@ for subapp in CONFIG.subapps
   else
     subModule = initializer(express(), CONFIG)
 
-  app.use "#{base}/#{subapp}", subModule
+  app.use routePath("/#{subapp}"), subModule
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
