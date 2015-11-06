@@ -77,7 +77,7 @@ routePath = (fragment) ->
   mountPath = CONFIG.mountPath or '/'
   return fragment if mountPath is '/'
 
-  if mountPath.endswith('/') and fragment.startsWith('/')
+  if mountPath.endsWith('/') and fragment.startsWith('/')
     fragment = fragment.substring 1, fragment.length
 
   return "#{mountPath}#{fragment}"
