@@ -27,6 +27,8 @@ app.set 'strict routing', on
 # view engine setup
 # we set views at this level so we can call res.render
 app.set 'view engine', CONFIG.viewEngine
+if app.get('env') == 'development'
+  app.locals.pretty = on
 app.set 'views', path.join(__dirname, CONFIG.viewsDir)
 
 # pluginable modules
