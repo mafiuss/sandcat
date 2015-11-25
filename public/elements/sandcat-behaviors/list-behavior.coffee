@@ -20,6 +20,8 @@ do (window) ->
         notify: on
         value: ->
           return {}
+      selectedIndex:
+        type: Number
     listeners:
       onResponse: 'responseHandler'
       onError: 'errorHandler'
@@ -88,12 +90,28 @@ do (window) ->
       s = @list[i]
       @fire 'edit-model', s
 
+    editSelectedItem: (event)->
+      @fire 'edit-model', @selected
+
     deleteItem: (event)->
       i = @clickedModel(event)
       # console.log 'delete?', i, @selected
       if @deleteDataSource?
         @deleteDataSource.generateRequest()
       @fire 'delete-model', @selected
+
+    deleteSelectedItem: (event)->
+      if @deleteDataSource?
+        @deleteDataSource.generateRequest()
+      @fire 'delete-model', @selected
+
+    removeSelectedItemFromList: ->
+      console.log 'remove selected item', @selectedIndex
+      return unless @selectedIndex?
+
+      @splice 'list', @selectedIndex, 1
+      @selected = null
+      @selectedIndex = null
 
     remove: (model) ->
       return unless model?
@@ -115,8 +133,9 @@ do (window) ->
     clickedModel: (event) ->
       return unless event.model?.item?
       # console.log 'clicked', event.model?.item
-      event.model.index
+      # event.model.index
       @selected = event.model.item
+      @selectedIndex = event.model.index
       return event.model.index
 
     searchFilter: (event) ->
@@ -166,4 +185,6 @@ do (window) ->
 
     _itemTouched: (event, detail) ->
       # console.log 'item selected in behavior'
-      @fire 'list-item-selected', event.model.item
+      @selected = event.model.item
+      @selectedIndex = event.model.index
+      @fire 'list-item-selected', @selected

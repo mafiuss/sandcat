@@ -90,3 +90,9 @@ do (window) ->
       console.log 'submit in behavior'
       @prepareData()
       @editForm.submit()
+
+    onFormResponse: (event, detail) ->
+      @fire 'form-response', detail
+
+    onFormError: (event, detail) ->
+      @fire 'form-error', detail
