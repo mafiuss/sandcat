@@ -1,1 +1,1 @@
-HOSTNAME=0.0.0.0 PORT=8006 coffee index.coffee
+HOSTNAME=0.0.0.0 PORT=8001 coffee index.coffee
