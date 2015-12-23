@@ -14,7 +14,7 @@ It builds a minified/vulcanized html/css/js dist too.
 ```
 git clone https://github.com/mafiuss/sandcat.git
 cd sandcat
-npm i & bower i
+npm i && bower i
 sh start.sh
 ```
 To build a minimified/vulcanized dist run:
