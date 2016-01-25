@@ -1,7 +1,8 @@
 LocalStrategy   = require('passport-local').Strategy
-userModel = null
+UserModel = null
+
 module.exports = (passport, model, options) ->
-  userModel = model
+  UserModel = model
   MOUNT_PATH = if options.config.mountPath? then options.config.mountPath else ''
   BASEURL = if options.config.baseURL? then options.config.baseURL else 'http://localhost:8001'
   AUTHMODULE = if options.config.authModule? then options.config.authModule else 'auth'
@@ -10,7 +11,7 @@ module.exports = (passport, model, options) ->
     done(null, user.id)
 
   passport.deserializeUser (id, done) ->
-    userModel.findById id, (err, user) ->
+    UserModel.findById id, (err, user) ->
       done err, user
 
 
@@ -18,16 +19,18 @@ module.exports = (passport, model, options) ->
     usernameField: 'email'
     passwordField: 'password'
   , (email, password, done) ->
-    userModel.findOne {'local.email': email}, (err, user) ->
-      console.log 'hitit'
-      return done(err) if err?
-      return done(null, false) unless user?
-      console.log 'hit it!'
+    UserModel.findOne('local.email': email).exec().then (user) ->
+      throw new Error('user not found') unless user?
+
+      console.log 'checking password for', user.local.email
       if user.checkPassword(password)
         tryToLogUserAccess(user, options)
         done null, user
       else
         done null, false
+    .catch (error) ->
+      console.log 'error', error
+      return done(error) if error?
 
 tryToLogUserAccess = (user, options) ->
   try

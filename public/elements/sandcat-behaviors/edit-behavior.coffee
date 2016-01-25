@@ -6,6 +6,7 @@ do (window) ->
       model:
         type: Object
         notify: on
+        obsever: '_modelChanged'
         value: ->
           return {}
       baseURL: String
@@ -96,3 +97,7 @@ do (window) ->
 
     onFormError: (event, detail) ->
       @fire 'form-error', detail
+
+    _modelChanged: (n) ->
+      console.log 'edit-behavior _modelChanged'
+      return

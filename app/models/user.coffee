@@ -91,5 +91,9 @@ UserSchema.statics.findOneOrCreate = (criteria, document, callback)->
       callback err2, newuser
 
 
-
+UserSchema.statics.findOneOrCreateAsync = (criteria, document) ->
+  return @findOne(criteria).exec().then (user) =>
+    return user if user?
+    return @create document
+    
 module.exports = mongoose.model('User', UserSchema)

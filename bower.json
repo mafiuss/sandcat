@@ -16,7 +16,7 @@
     "polymer": "Polymer/polymer#^1.2.0",
     "page": "visionmedia/page.js#^1.6.3",
     "google-apis": "GoogleWebComponents/google-apis#^1.1.2",
-    "google-chart": "GoogleWebComponents/google-chart#^1.0.3",
+    "google-chart": "GoogleWebComponents/google-chart#~1.0.4",
     "iron-elements": "PolymerElements/iron-elements#^1.0.4",
     "paper-elements": "PolymerElements/paper-elements#^1.0.5",
     "gold-elements": "PolymerElements/gold-elements#~1.0.1",

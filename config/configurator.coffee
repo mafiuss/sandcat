@@ -2,7 +2,6 @@ express = require 'express'
 coffee = require 'coffee-script'
 path = require 'path'
 fs = require 'fs'
-jadeStatic = require 'connect-jade-static'
 async = require 'async'
 stylus = require 'stylus'
 
@@ -65,6 +64,8 @@ module.exports = (app, options, passport) ->
 
   # dev only middleware
   if app.get('env') is 'development'
+    app.locals.pretty = on
+
     # stylus middleware
     # app.use require('stylus').middleware(path.join(__dirname, 'public'))
     #
