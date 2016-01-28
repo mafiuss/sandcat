@@ -5,63 +5,69 @@ html(lang='')
     include ./partials/meta.jade
     include ./index/head.jade
     
-body.fullbleed.layout.vertical(unresolved='')
+body(unresolved)
   span#browser-sync-binding
   template#app(is='dom-bind')
     paper-drawer-panel#paperDrawerPanel
       // Drawer Scroll Header Panel
-      paper-scroll-header-panel(drawer='', fixed='')
+      paper-scroll-header-panel(drawer, fixed)
         // Drawer Toolbar
         paper-toolbar#drawerToolbar
-          span.paper-font-title Menu
+          span.menu-name Menu
         // Drawer Content
-        paper-menu.list(attr-for-selected='data-route', selected='[[route]]')
-          a(data-route='home', href='/', on-click='onDataRouteClick')
+        paper-menu(attr-for-selected='data-route', selected='[[route]]')
+          a(data-route='home', href='[[baseUrl]]')
             iron-icon(icon='home')
             span Home
-          a(data-route='users', href='/users', on-click='onDataRouteClick')
+          a(data-route='users', href='[[baseUrl]]users')
             iron-icon(icon='info')
             span Users
-          a(data-route='contact', href='/contact', on-click='onDataRouteClick')
+          a(data-route='contact', href='[[baseUrl]]contact')
             iron-icon(icon='mail')
             span Contact
       // Main Area
-      paper-scroll-header-panel(main='', condenses='', keep-condensed-header='')
+      paper-scroll-header-panel#headerPanelMain(main, condenses, keep-condensed-header)
         // Main Toolbar
         paper-toolbar#mainToolbar.tall
-          paper-icon-button#paperToggle(icon='menu', paper-drawer-toggle='')
-          span.flex
+          paper-icon-button#paperToggle(icon='menu', paper-drawer-toggle)
+          span.space
           // Toolbar icons
           paper-icon-button(icon='refresh')
           paper-icon-button(icon='search')
           // Application name
-          .middle.middle-container.center.horizontal.layout
+          .middle.middle-container
             .app-name Full stack coffee-script + Polymer Starter Kit 
           // Application sub title
-          .bottom.bottom-container.center.horizontal.layout
-            .bottom-title.paper-font-subhead The future of the web today
+          .bottom.bottom-container
+            .bottom-title The future of the web today
         // Main Content
         .content
           iron-pages(attr-for-selected='data-route', selected='{{route}}')
             section(data-route='home')
               paper-material(elevation='1')
-                p.paper-font-subhead You now have:
+                p.subhead You now have:
                 my-list(list='{{myListItems}}')
-                p.paper-font-body2
+                p
                   | Looking for more Web App layouts? Check out our 
                   a(href='https://github.com/PolymerElements/app-layout-templates') layouts
                   |  collection. You can also 
                   a(href='http://polymerelements.github.io/app-layout-templates/') preview
                   |  them live.
               paper-material(elevation='1')
-                p.paper-font-body2 This is another card.
-              paper-material.paper-font-body2(elevation='1')
+                p This is another card.
+              paper-material(elevation='1')
                 p ;)
             section(data-route='users')
               paper-material(elevation='1')
                 h2.page-title Users
                 p This is the users section
-                a(href='/users/Rob') Rob
+                a(href$='{{baseUrl}}users/Addy') Addy
+                br                             
+                a(href$='{{baseUrl}}users/Rob') Rob
+                br               
+                a(href$='{{baseUrl}}users/Chuck') Chuck
+                br               
+                a(href$='{{baseUrl}}users/Sam') Sam
             section(data-route='user-info')
               paper-material(elevation='1')
                 h2.page-title
@@ -75,6 +81,8 @@ body.fullbleed.layout.vertical(unresolved='')
               paper-material(elevation='1')
                 h2.page-title Contact
                 p This is the contact section
+    paper-toast#toast
+      span.toast-hide-button(role='button', tabindex='0', onclick='app.$.toast.hide()') Ok
     // Uncomment next block to enable Service Worker support (1/2)
     //
       <paper-toast id="caching-complete"

@@ -13,11 +13,18 @@ do (document) ->
   # and give it some initial binding values
   # Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   app = document.querySelector('#app')
+  # Sets app default base URL
+  app.baseUrl = '/'
+  if window.location.port == ''
+    # if production
+    # Uncomment app.baseURL below and
+    # set app.baseURL to '/your-pathname/' if running from folder in production
+    app.baseUrl = '/mountpath/';
 
   app.displayInstalledToast = ->
     # Check to make sure caching is actually enabled—it won't be in the dev environment.
-    if !document.querySelector('platinum-sw-cache').disabled
-      document.querySelector('#caching-complete').show()
+    if !Polymer.dom(document).querySelector('platinum-sw-cache').disabled
+      Polymer.dom(document).querySelector('#caching-complete').show()
     return
 
   # Listen for template bound event to know when bindings
@@ -33,16 +40,18 @@ do (document) ->
   # the appName in the middle-container and the bottom title in the bottom-container.
   # The appName is moved to top and shrunk on condensing. The bottom sub title
   # is shrunk to nothing on condensing.
-  addEventListener 'paper-header-transform', (e) ->
-    appName = document.querySelector('#mainToolbar .app-name')
-    middleContainer = document.querySelector('#mainToolbar .middle-container')
-    bottomContainer = document.querySelector('#mainToolbar .bottom-container')
+  window.addEventListener 'paper-header-transform', (e) ->
+    appName = Polymer.dom(document).querySelector('#mainToolbar .app-name')
+    middleContainer = Polymer.dom(document).querySelector('#mainToolbar .middle-container')
+    bottomContainer = Polymer.dom(document).querySelector('#mainToolbar .bottom-container')
     detail = e.detail
     heightDiff = detail.height - (detail.condensedHeight)
     yRatio = Math.min(1, detail.y / heightDiff)
-    maxMiddleScale = 0.50
     # appName max size when condensed. The smaller the number the smaller the condensed size.
-    scaleMiddle = Math.max(maxMiddleScale, (heightDiff - (detail.y)) / (heightDiff / (1 - maxMiddleScale)) + maxMiddleScale)
+    maxMiddleScale = 0.50
+    auxHeight = heightDiff - (detail.y)
+    auxScale = heightDiff / (1 - maxMiddleScale)
+    scaleMiddle = Math.max(maxMiddleScale, auxHeight / auxScale + maxMiddleScale)
     scaleBottom = 1 - yRatio
     # Move/translate middleContainer
     Polymer.Base.transform 'translate3d(0,' + yRatio * 100 + '%,0)', middleContainer
@@ -51,18 +60,14 @@ do (document) ->
     # Scale middleContainer appName
     Polymer.Base.transform 'scale(' + scaleMiddle + ') translateZ(0)', appName
     return
-  # Close drawer after menu item is selected if drawerPanel is narrow
-
-  app.onDataRouteClick = ->
-    drawerPanel = document.querySelector('#paperDrawerPanel')
-    if drawerPanel.narrow
-      drawerPanel.closeDrawer()
-    return
-
   # Scroll page to top and expand header
 
   app.scrollPageToTop = ->
-    document.getElementById('mainContainer').scrollTop = 0
+    app.$.headerPanelMain.scrollToTop true
+    return
+
+  app.closeDrawer = ->
+    app.$.paperDrawerPanel.closeDrawer()
     return
 
   app.myListItems = [
