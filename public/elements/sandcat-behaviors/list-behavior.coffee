@@ -22,6 +22,10 @@ do (window) ->
           return {}
       selectedIndex:
         type: Number
+      minListLength:
+        type: Number
+        value: ->
+          return 10
     listeners:
       onResponse: 'responseHandler'
       onError: 'errorHandler'
@@ -160,6 +164,12 @@ do (window) ->
         ok = ok or k.indexOf(value) isnt -1
         # console.log  'checking', searchKey, k, value,ok
       ok
+      
+    hideSearch: (list) ->
+      return on unless list
+      return on unless Array.isArray(list)
+
+      return list.length < @minListLength
 
     disabledFilter: (event, detail) ->
       # console.log 'searchFilter in behavior'
