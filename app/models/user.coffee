@@ -42,6 +42,9 @@ UserSchema = new Schema
     token: String
     email: String
     name: String
+    whitelisted:
+      type: Boolean
+      default: off
   roles: [String]
   verified:
     type: Boolean
@@ -95,5 +98,5 @@ UserSchema.statics.findOneOrCreateAsync = (criteria, document) ->
   return @findOne(criteria).exec().then (user) =>
     return user if user?
     return @create document
-    
+
 module.exports = mongoose.model('User', UserSchema)
