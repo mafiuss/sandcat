@@ -24,6 +24,7 @@ module.exports = (app, config, passport) ->
   app.route('/logout')
     .all (req, res) ->
       req.logout()
+      req.session.destroy()
       res.redirect '/'
 
   app.route '/not-found'

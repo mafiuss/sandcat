@@ -48,6 +48,8 @@ do (window) ->
         feedback = "ocurrio un problema, #{detail.statusText}"
 
       @model = detail.model if detail.model?
+      @model = detail.response.model if detail.response?.model?
+      
       @notify feedback
       @fire 'model-saved', message: feedback
 
