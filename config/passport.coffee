@@ -19,7 +19,7 @@ module.exports = (passport, model, options) ->
     usernameField: 'email'
     passwordField: 'password'
   , (email, password, done) ->
-    UserModel.findOne('local.email': email).exec().then (user) ->
+    UserModel.findOne('local.email': email.toLowerCase()).exec().then (user) ->
       throw new Error('user not found') unless user?
 
       console.log 'checking password for', user.local.email
